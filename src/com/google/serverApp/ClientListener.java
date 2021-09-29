@@ -3,13 +3,15 @@ package com.google.serverApp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+
 import java.util.Scanner;
 
 public class ClientListener implements Runnable{
 
     private final Socket clientSocket;
-    private final String COMMAND_GET_RANDOM_BOOL = "true_or_false";
+    public static final String CMD_GET_RANDOM_BOOL = "get";
     private PrintWriter printWriter;
+    private String command;
 
     public ClientListener(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -34,11 +36,29 @@ public class ClientListener implements Runnable{
             if (!scanner.hasNextLine()) {
                 break;
             }
-            String command = scanner.nextLine();
-            if (command.equals(COMMAND_GET_RANDOM_BOOL)){
-                printWriter.println(true);
-                printWriter.flush();
-            }
+            command = scanner.nextLine();
+            System.out.println("Command from client: " + command);
+            commandProcessor();
         }
+    }
+
+    public boolean getRandom(){
+        int a = (int) ( Math.random() * 2 );
+        return a == 1;
+    }
+
+    private void commandProcessor(){
+        if (command.equalsIgnoreCase(CMD_GET_RANDOM_BOOL)){
+            String message = String.valueOf(getRandom());
+            sendToClient(message);
+            System.out.println("Send to client: " + message);
+        }else {
+            System.out.println("Unknown client command");
+        }
+    }
+
+    private void sendToClient(String message){
+        printWriter.println(message);
+        printWriter.flush();
     }
 }

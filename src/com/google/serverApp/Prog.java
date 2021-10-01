@@ -4,7 +4,7 @@ public class Prog {
 
     public void start(){
         greeting();
-        Server server = new Server(6789);
+        Server server = new Server(6788);
         Thread thread = new Thread(server);
         thread.start();
     }
